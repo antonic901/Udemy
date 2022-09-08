@@ -7,8 +7,8 @@ import { User } from './user.entity';
 export class UsersService {
 
     // Same as below
-    constructor(@InjectRepository(User) private repo: Repository<User>) {}
-    
+    constructor(@InjectRepository(User) private repo: Repository<User>) { } // -> We need @InjectRepository  because Repository<> is generic type
+
     // repo: Repository<User>;
 
     // constructor(repo: Repository<User>) {
@@ -16,7 +16,7 @@ export class UsersService {
     // }
 
     create(email: string, password: string) {
-        const user = this.repo.create({email, password});
+        const user = this.repo.create({ email, password });
 
         return this.repo.save(user);
     }
@@ -51,7 +51,7 @@ export class UsersService {
 
     async remove(id: number) {
         const user = await this.findOne(id);
-        if(!user) {
+        if (!user) {
             // throw new Error('user not found');
             throw new NotFoundException('users not found');
         }
