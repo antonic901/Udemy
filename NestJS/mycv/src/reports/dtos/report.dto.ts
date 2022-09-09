@@ -17,6 +17,8 @@ export class ReportDto {
     model: string;
     @Expose()
     mileage: number;
+    @Expose()
+    approved: boolean;
 
     // @Transform() -> Take original Report instance and assing user id from it (obj.user.id == report.user.id) to userId
     @Transform(({ obj }) => obj.user.id)

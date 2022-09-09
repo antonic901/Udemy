@@ -12,6 +12,9 @@ export class User {
     @Column()
     password: string;
 
+    @Column({ default: true })
+    admin: boolean
+
     // One user have many reports
     // -> first argument (() => Report) is telling that are user will be associated with something called Report
     // -> 

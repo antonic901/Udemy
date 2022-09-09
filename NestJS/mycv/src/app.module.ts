@@ -8,6 +8,7 @@ import { User } from './users/user.entity';
 import { Report } from './reports/report.entity';
 import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+
 const cookieSession = require('cookie-session');
 
 @Module({
@@ -16,13 +17,22 @@ const cookieSession = require('cookie-session');
             isGlobal: true,
             envFilePath: `.env.${process.env.NODE_ENV}`
         }),
+        // This tells TypeORM to use ormconfig.js
+        // TypeOrmModule.forRoot(),
+        // TypeOrmModule.forRootAsync({
+        //     inject: [ConfigService],
+        //     useFactory: (config: ConfigService) => {
+        //         const settings = require('../ormconfig.js')
+        //         return settings;
+        //     }
+        // }),
         TypeOrmModule.forRootAsync({
             inject: [ConfigService],
             useFactory: (config: ConfigService) => {
                 return {
                     type: 'sqlite',
                     database: config.get<string>('DB_NAME'),
-                    synchronize: true,
+                    synchronize: true, // -> 
                     entities: [User, Report]
                 }
             }
@@ -50,9 +60,12 @@ const cookieSession = require('cookie-session');
     ],
 })
 export class AppModule {
+    constructor(
+        private configService: ConfigService
+    ) {}
     configure(consumer: MiddlewareConsumer) {
         consumer.apply(cookieSession({
-            keys: ['asdada']
+            keys: [this.configService.get('COOKIE_KEY')]
         })).forRoutes('*') // -> * means it is global middleware (applied for every endpoint)
     }
 }
